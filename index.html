@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Placement Portal - GETPlaced</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <header class="bg-slate-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-800 p-2 rounded text-white font-bold text-lg tracking-wider">GETPlaced</div>
+        <div>
+          <h1 class="text-lg font-semibold tracking-wide">GETPlaced</h1>
+          <p class="text-xs text-slate-400 uppercase tracking-widest">Campus Placement & Training Cell</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <label for="roleSelector" class="text-xs font-semibold text-slate-300 uppercase tracking-wider">View Portal
+            As:</label>
+          <select id="roleSelector" onchange="handleRoleChange()"
+            class="bg-slate-800 text-white text-sm rounded border border-slate-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="student">Student (Akshat Sharma)</option>
+            <option value="tpo">TPO Administrator</option>
+            <option value="hr">Company HR (Google)</option>
+            <option value="coordinator">Department Coordinator</option>
+          </select>
+        </div>
+        <div id="connectionStatus"
+          class="flex items-center gap-1.5 text-xs bg-slate-800 px-2.5 py-1 rounded text-emerald-400">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Connected
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
+    <div id="toast"
+      class="hidden fixed bottom-5 right-5 z-50 px-4 py-3 rounded shadow-lg transition-opacity duration-300 text-sm">
+    </div>
+
+    <div id="studentView" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Student Profile</h2>
+          <div class="space-y-3">
+            <div>
+              <span class="text-xs text-slate-500 uppercase tracking-wider block">Full Name</span>
+              <span class="text-sm font-medium text-slate-800" id="studentName">Loading...</span>
+            </div>
+            <div>
+              <span class="text-xs text-slate-500 uppercase tracking-wider block">Academic Branch</span>
+              <span class="text-sm font-medium text-slate-800" id="studentBranch">Loading...</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <span class="text-xs text-slate-500 uppercase tracking-wider block">Cumulative CGPA</span>
+                <span class="text-sm font-semibold text-slate-800" id="studentCgpa">Loading...</span>
+              </div>
+              <div>
+                <span class="text-xs text-slate-500 uppercase tracking-wider block">Verification status</span>
+                <span id="studentVerifyBadge"
+                  class="inline-block mt-0.5 px-2 py-0.5 text-xs font-bold rounded">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm md:col-span-2 space-y-4">
+          <h2 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Eligible Job Openings</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 uppercase text-xs">
+                  <th class="py-2">Job Title</th>
+                  <th class="py-2">Company</th>
+                  <th class="py-2 text-center">Package (LPA)</th>
+                  <th class="py-2 text-center">Min CGPA</th>
+                  <th class="py-2 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="eligibleJobsTable" class="divide-y divide-slate-100">
+                <tr>
+                  <td colspan="5" class="py-4 text-center text-slate-500">Fetching eligible job postings...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Your Job Applications</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 uppercase text-xs">
+                <th class="py-2">Company Name</th>
+                <th class="py-2">Position</th>
+                <th class="py-2">Status</th>
+                <th class="py-2">Interview Slot</th>
+                <th class="py-2 text-right">Self Schedule</th>
+              </tr>
+            </thead>
+            <tbody id="studentApplicationsTable" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="5" class="py-4 text-center text-slate-500">Retrieving submitted applications...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="tpoView" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-center space-y-1">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Active Jobs</span>
+          <p id="tpoTotalJobs" class="text-3xl font-extrabold text-slate-800">0</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-center space-y-1">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Students Placed</span>
+          <p id="tpoTotalPlaced" class="text-3xl font-extrabold text-slate-800">0</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-center space-y-1">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending Verifications</span>
+          <p id="tpoPendingVerify" class="text-3xl font-extrabold text-amber-600">0</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm lg:col-span-2 space-y-4">
+          <h2 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Verification Queue</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 uppercase text-xs">
+                  <th class="py-2">Student Name</th>
+                  <th class="py-2">Branch</th>
+                  <th class="py-2 text-center">CGPA</th>
+                  <th class="py-2 text-right">Verification Action</th>
+                </tr>
+              </thead>
+              <tbody id="unverifiedStudentsTable" class="divide-y divide-slate-100">
+                <tr>
+                  <td colspan="4" class="py-4 text-center text-slate-500">Checking pending student approvals...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Broadcast Announcement</h2>
+          <form onsubmit="broadcastAnnouncement(event)" class="space-y-4">
+            <div>
+              <label for="announcementTitle"
+                class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Title / Subject</label>
+              <input type="text" id="announcementTitle" required
+                class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+                placeholder="e.g. Google Interview Guidelines">
+            </div>
+            <div>
+              <label for="announcementBody"
+                class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Message Content</label>
+              <textarea id="announcementBody" rows="4" required
+                class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+                placeholder="Enter placement instructions for eligible students..."></textarea>
+            </div>
+            <button type="submit"
+              class="w-full bg-slate-800 hover:bg-slate-950 text-white py-2 rounded text-sm font-semibold tracking-wider transition-colors duration-150">BROADCAST
+              TO ALL</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="hrView"
+      class="hidden max-w-2xl mx-auto bg-white p-8 rounded-lg border border-slate-200 shadow-sm space-y-6">
+      <h2 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Post a New Job Opening</h2>
+      <form onsubmit="submitJobPosting(event)" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="jobTitle" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Job
+              Designation Title</label>
+            <input type="text" id="jobTitle" required
+              class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+              placeholder="e.g. SDE Frontend Engineer">
+          </div>
+          <div>
+            <label for="companyName"
+              class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Company Entity
+              Name</label>
+            <input type="text" id="companyName" required
+              class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+              placeholder="e.g. Google LLC">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label for="minCgpa" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Min
+              CGPA Requirement</label>
+            <input type="number" id="minCgpa" step="0.1" min="0" max="10" required
+              class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+              placeholder="e.g. 8.0">
+          </div>
+          <div>
+            <label for="packageLpa"
+              class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Annual CTC Package
+              (LPA)</label>
+            <input type="number" id="packageLpa" step="0.1" required
+              class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+              placeholder="e.g. 24.5">
+          </div>
+          <div>
+            <label for="branches"
+              class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Eligible Branches</label>
+            <input type="text" id="branches" required
+              class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+              placeholder="e.g. CS,IT,EC">
+          </div>
+        </div>
+
+        <div>
+          <label for="jobDescription"
+            class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Job Profile
+            Description</label>
+          <textarea id="jobDescription" rows="4" required
+            class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-blue-500"
+            placeholder="Specify key technical skills, requirements, and responsibilities..."></textarea>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-slate-800 hover:bg-slate-950 text-white py-2.5 rounded text-sm font-semibold tracking-wider transition-colors duration-150">SUBMIT
+          RECRUITMENT POSTING</button>
+      </form>
+    </div>
+
+    <div id="coordinatorView" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm lg:col-span-2 space-y-4">
+          <h2 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Departmental Placement
+            Records</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 uppercase text-xs">
+                  <th class="py-2">Academic Department</th>
+                  <th class="py-2 text-center">Students Registered</th>
+                  <th class="py-2 text-center">Students Placed</th>
+                  <th class="py-2 text-center">Placement Rate</th>
+                  <th class="py-2 text-right">Average Package (LPA)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                <tr>
+                  <td class="py-3 font-medium text-slate-900">Computer Science & Engineering (CSE)</td>
+                  <td class="py-3 text-center">120</td>
+                  <td class="py-3 text-center">112</td>
+                  <td class="py-3 text-center"><span
+                      class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">93.3%</span>
+                  </td>
+                  <td class="py-3 text-right font-medium">18.4 LPA</td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-medium text-slate-900">Information Technology (IT)</td>
+                  <td class="py-3 text-center">90</td>
+                  <td class="py-3 text-center">81</td>
+                  <td class="py-3 text-center"><span
+                      class="px-2 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">90.0%</span>
+                  </td>
+                  <td class="py-3 text-right font-medium">16.2 LPA</td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-medium text-slate-900">Electronics & Communication (ECE)</td>
+                  <td class="py-3 text-center">110</td>
+                  <td class="py-3 text-center">88</td>
+                  <td class="py-3 text-center"><span
+                      class="px-2 py-0.5 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-full">80.0%</span>
+                  </td>
+                  <td class="py-3 text-right font-medium">12.5 LPA</td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-medium text-slate-900">Electrical Engineering (EE)</td>
+                  <td class="py-3 text-center">80</td>
+                  <td class="py-3 text-center">56</td>
+                  <td class="py-3 text-center"><span
+                      class="px-2 py-0.5 text-xs font-semibold bg-slate-50 text-slate-600 border border-slate-200 rounded-full">70.0%</span>
+                  </td>
+                  <td class="py-3 text-right font-medium">9.8 LPA</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-md font-bold text-slate-900 border-b pb-2 tracking-wide uppercase">Active Student Queries</h2>
+          <div class="space-y-4" id="coordinatorQueries">
+            <div class="border border-slate-200 rounded p-3 text-xs space-y-2">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-700">Alice Smith (CSE)</span>
+                <span
+                  class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded font-semibold text-[10px] uppercase">Pending
+                  TPO</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed">Verification request remains pending. I have uploaded my updated
+                Semester 6 transcripts detailing my 8.5 CGPA.</p>
+            </div>
+            <div class="border border-slate-200 rounded p-3 text-xs space-y-2">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-700">Bob Jones (ECE)</span>
+                <span
+                  class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-semibold text-[10px] uppercase">NOC
+                  Issued</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed">Require placement cell NOC document for the upcoming summer
+                internship selection at Intel.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-slate-900 text-slate-400 py-4 text-center text-xs border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4">
+      &copy; 2026 National Institute of Technology. All placement data complies with Institutional Accreditation
+      Standards.
+    </div>
+  </footer>
+
+  <script>
+    const API_BASE = 'http://localhost:5000/api';
+    let currentToken = '';
+    let currentStudentId = null;
+
+    const credentials = {
+      student: { email: 'alice@college.edu', password: 'alice123' },
+      tpo: { email: 'tpo@college.edu', password: 'tpo123' },
+      hr: { email: 'hr@google.com', password: 'hr123' }
+    };
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.className = `fixed bottom-5 right-5 z-50 px-4 py-3 rounded shadow-lg transition-opacity duration-300 text-sm ${isError ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}`;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 4000);
+    }
+
+    async function checkBackendConnection() {
+      const statusIndicator = document.getElementById('connectionStatus');
+      try {
+        const response = await fetch(`${API_BASE}/jobs`);
+        if (response.status === 401 || response.ok) {
+          statusIndicator.innerHTML = '<span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>Connected';
+          statusIndicator.className = 'flex items-center gap-1.5 text-xs bg-slate-800 px-2.5 py-1 rounded text-emerald-400';
+        }
+      } catch (err) {
+        statusIndicator.innerHTML = '<span class="h-2 w-2 rounded-full bg-rose-500"></span>Offline';
+        statusIndicator.className = 'flex items-center gap-1.5 text-xs bg-slate-800 px-2.5 py-1 rounded text-rose-500';
+      }
+    }
+
+    async function authenticate(role) {
+      if (role === 'coordinator') {
+        currentToken = '';
+        currentStudentId = null;
+        return true;
+      }
+
+      const creds = credentials[role];
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(creds)
+        });
+        const data = await response.json();
+        if (response.ok) {
+          currentToken = data.token;
+          if (role === 'student') {
+            currentStudentId = data.user.student_id;
+          }
+          return true;
+        } else {
+          showToast(data.error || 'Authentication failure', true);
+          return false;
+        }
+      } catch (err) {
+        showToast('Cannot connect to backend server. Make sure it is running on port 5000.', true);
+        return false;
+      }
+    }
+
+    async function handleRoleChange() {
+      const selectedRole = document.getElementById('roleSelector').value;
+
+      document.getElementById('studentView').classList.add('hidden');
+      document.getElementById('tpoView').classList.add('hidden');
+      document.getElementById('hrView').classList.add('hidden');
+      document.getElementById('coordinatorView').classList.add('hidden');
+
+      const authSuccess = await authenticate(selectedRole);
+      if (!authSuccess) return;
+
+      if (selectedRole === 'student') {
+        document.getElementById('studentView').classList.remove('hidden');
+        await loadStudentDashboard();
+      } else if (selectedRole === 'tpo') {
+        document.getElementById('tpoView').classList.remove('hidden');
+        await loadTpoDashboard();
+      } else if (selectedRole === 'hr') {
+        document.getElementById('hrView').classList.remove('hidden');
+      } else if (selectedRole === 'coordinator') {
+        document.getElementById('coordinatorView').classList.remove('hidden');
+      }
+    }
+
+    async function loadStudentDashboard() {
+      try {
+        const applicationsRes = await fetch(`${API_BASE}/applications/student/${currentStudentId}`, {
+          headers: { 'Authorization': `Bearer ${currentToken}` }
+        });
+        const applications = await applicationsRes.json();
+
+        let isVerified = 0;
+        let cgpa = 8.5;
+        let branch = 'CS';
+        let name = 'Alice Smith';
+
+        if (applications && applications.length > 0) {
+          const statsRes = await fetch(`${API_BASE}/tpo/stats`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          if (statsRes.status === 403) {
+            isVerified = 1;
+          }
+        }
+
+        document.getElementById('studentName').innerText = name;
+        document.getElementById('studentBranch').innerText = branch;
+        document.getElementById('studentCgpa').innerText = cgpa;
+
+        const badge = document.getElementById('studentVerifyBadge');
+        if (isVerified === 1) {
+          badge.innerText = 'VERIFIED';
+          badge.className = 'inline-block mt-0.5 px-2 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 border border-emerald-200';
+        } else {
+          badge.innerText = 'PENDING';
+          badge.className = 'inline-block mt-0.5 px-2 py-0.5 text-xs font-bold rounded bg-amber-100 text-amber-800 border border-amber-200';
+        }
+
+        const eligibleRes = await fetch(`${API_BASE}/jobs/eligible?cgpa=${cgpa}&branch=${branch}`, {
+          headers: { 'Authorization': `Bearer ${currentToken}` }
+        });
+        const eligibleJobs = await eligibleRes.json();
+
+        const jobsBody = document.getElementById('eligibleJobsTable');
+        jobsBody.innerHTML = '';
+
+        if (eligibleJobs.error) {
+          jobsBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-rose-500">${eligibleJobs.error}</td></tr>`;
+        } else if (eligibleJobs.length === 0) {
+          jobsBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">No jobs match your criteria currently.</td></tr>`;
+        } else {
+          eligibleJobs.forEach(job => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50';
+
+            const alreadyApplied = applications && applications.some(app => app.job_id === job.id);
+
+            const actionButton = alreadyApplied
+              ? `<span class="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded">Applied</span>`
+              : `<button onclick="applyForJob(${job.id})" class="bg-blue-900 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-1 rounded transition-colors duration-150">Apply Now</button>`;
+
+            row.innerHTML = `
+              <td class="py-3 font-semibold text-slate-900">${job.title}</td>
+              <td class="py-3 text-slate-600">${job.company_name}</td>
+              <td class="py-3 text-center text-slate-600 font-medium">${job.package_lpa} LPA</td>
+              <td class="py-3 text-center text-slate-600">${job.min_cgpa}</td>
+              <td class="py-3 text-right">${actionButton}</td>
+            `;
+            jobsBody.appendChild(row);
+          });
+        }
+
+        const appsBody = document.getElementById('studentApplicationsTable');
+        appsBody.innerHTML = '';
+
+        if (applications.error) {
+          appsBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-rose-500">${applications.error}</td></tr>`;
+        } else if (applications.length === 0) {
+          appsBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">You have not submitted any applications yet.</td></tr>`;
+        } else {
+          applications.forEach(app => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50';
+
+            let statusClass = 'bg-slate-100 text-slate-600 border border-slate-200';
+            if (app.status === 'Placed') statusClass = 'bg-emerald-100 text-emerald-800 border border-emerald-200';
+            if (app.status === 'Scheduled') statusClass = 'bg-blue-100 text-blue-800 border border-blue-200';
+            if (app.status === 'Rejected') statusClass = 'bg-rose-100 text-rose-800 border border-rose-200';
+
+            const displaySlot = app.interview_slot ? app.interview_slot : 'Not Scheduled';
+
+            let scheduleControl = '';
+            if (app.status !== 'Placed' && app.status !== 'Rejected') {
+              scheduleControl = `
+                <div class="flex items-center justify-end gap-1">
+                  <select id="slot-${app.application_id}" class="bg-slate-50 text-xs border border-slate-300 rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="2026-06-01 10:00 AM">01 Jun 10:00 AM</option>
+                    <option value="2026-06-02 02:00 PM">02 Jun 02:00 PM</option>
+                    <option value="2026-06-03 11:30 AM">03 Jun 11:30 AM</option>
+                  </select>
+                  <button onclick="scheduleSlot(${app.application_id})" class="bg-slate-800 hover:bg-slate-950 text-white text-[10px] font-bold px-2 py-1 rounded tracking-wider uppercase">Set</button>
+                </div>
+              `;
+            } else {
+              scheduleControl = `<span class="text-xs text-slate-400">-</span>`;
+            }
+
+            row.innerHTML = `
+              <td class="py-3 font-semibold text-slate-900">${app.company_name}</td>
+              <td class="py-3 text-slate-600">${app.title}</td>
+              <td class="py-3"><span class="px-2 py-0.5 text-xs font-bold rounded ${statusClass}">${app.status}</span></td>
+              <td class="py-3 text-slate-600 font-medium">${displaySlot}</td>
+              <td class="py-3 text-right">${scheduleControl}</td>
+            `;
+            appsBody.appendChild(row);
+          });
+        }
+      } catch (err) {
+        showToast('Error loading student dashboard statistics.', true);
+      }
+    }
+
+    async function applyForJob(jobId) {
+      try {
+        const response = await fetch(`${API_BASE}/applications/apply`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`
+          },
+          body: JSON.stringify({ job_id: jobId })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showToast('Job application submitted successfully.');
+          await loadStudentDashboard();
+        } else {
+          showToast(data.error || 'Failed to submit application', true);
+        }
+      } catch (err) {
+        showToast('Error sending application request.', true);
+      }
+    }
+
+    async function scheduleSlot(applicationId) {
+      const select = document.getElementById(`slot-${applicationId}`);
+      const slot = select.value;
+      try {
+        const response = await fetch(`${API_BASE}/applications/schedule`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`
+          },
+          body: JSON.stringify({
+            application_id: applicationId,
+            interview_slot: slot
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showToast('Interview slot successfully booked.');
+          await loadStudentDashboard();
+        } else {
+          showToast(data.error || 'Failed to schedule slot', true);
+        }
+      } catch (err) {
+        showToast('Error saving interview schedule.', true);
+      }
+    }
+
+    async function loadTpoDashboard() {
+      try {
+        const statsRes = await fetch(`${API_BASE}/tpo/stats`, {
+          headers: { 'Authorization': `Bearer ${currentToken}` }
+        });
+        const stats = await statsRes.json();
+
+        document.getElementById('tpoTotalJobs').innerText = stats.totalJobs || 0;
+        document.getElementById('tpoTotalPlaced').innerText = stats.totalPlaced || 0;
+        document.getElementById('tpoPendingVerify').innerText = stats.verificationQueueCount || 0;
+
+        const unverifiedRes = await fetch(`${API_BASE}/tpo/unverified`, {
+          headers: { 'Authorization': `Bearer ${currentToken}` }
+        });
+        const unverified = await unverifiedRes.json();
+
+        const tableBody = document.getElementById('unverifiedStudentsTable');
+        tableBody.innerHTML = '';
+
+        if (unverified.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-500">All registered students are currently verified.</td></tr>`;
+        } else {
+          unverified.forEach(student => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50';
+            row.innerHTML = `
+              <td class="py-3 font-semibold text-slate-900">${student.name}</td>
+              <td class="py-3 text-slate-600">${student.branch}</td>
+              <td class="py-3 text-center text-slate-600 font-semibold">${student.cgpa}</td>
+              <td class="py-3 text-right space-x-2">
+                <button onclick="verifyStudent(${student.id}, true)" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-2.5 py-1 rounded transition-colors duration-150">Verify</button>
+                <button onclick="verifyStudent(${student.id}, false)" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-2.5 py-1 rounded transition-colors duration-150">Block</button>
+              </td>
+            `;
+            tableBody.appendChild(row);
+          });
+        }
+      } catch (err) {
+        showToast('Error loading TPO information.', true);
+      }
+    }
+
+    async function verifyStudent(studentId, status) {
+      try {
+        const response = await fetch(`${API_BASE}/tpo/verify`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`
+          },
+          body: JSON.stringify({
+            student_id: studentId,
+            is_verified: status
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showToast(status ? 'Student verified successfully.' : 'Student blocked successfully.');
+          await loadTpoDashboard();
+        } else {
+          showToast(data.error || 'Verification update failed', true);
+        }
+      } catch (err) {
+        showToast('Error processing verification.', true);
+      }
+    }
+
+    function broadcastAnnouncement(e) {
+      e.preventDefault();
+      const title = document.getElementById('announcementTitle').value;
+      const body = document.getElementById('announcementBody').value;
+
+      showToast(`Announcement Broadcasted: "${title}"`);
+      document.getElementById('announcementTitle').value = '';
+      document.getElementById('announcementBody').value = '';
+    }
+
+    async function submitJobPosting(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('jobTitle').value;
+      const company_name = document.getElementById('companyName').value;
+      const min_cgpa = parseFloat(document.getElementById('minCgpa').value);
+      const branches = document.getElementById('branches').value;
+      const package_lpa = parseFloat(document.getElementById('packageLpa').value);
+      const description = document.getElementById('jobDescription').value;
+
+      try {
+        const response = await fetch(`${API_BASE}/hr/post-job`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`
+          },
+          body: JSON.stringify({
+            title,
+            company_name,
+            min_cgpa,
+            branches,
+            package_lpa,
+            description
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showToast('Job opening posted successfully.');
+          document.getElementById('jobTitle').value = '';
+          document.getElementById('companyName').value = '';
+          document.getElementById('minCgpa').value = '';
+          document.getElementById('branches').value = '';
+          document.getElementById('packageLpa').value = '';
+          document.getElementById('jobDescription').value = '';
+        } else {
+          showToast(data.error || 'Failed to post job listing', true);
+        }
+      } catch (err) {
+        showToast('Error sending job recruitment data.', true);
+      }
+    }
+
+    window.onload = async () => {
+      await checkBackendConnection();
+      setInterval(checkBackendConnection, 10000);
+      await handleRoleChange();
+    };
+  </script>
+</body>
+
+</html>
