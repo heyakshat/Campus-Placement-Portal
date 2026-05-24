@@ -71,60 +71,96 @@
               <span class="text-sm font-bold text-slate-900" id="studentCgpa">8.5</span>
             </div>
             <div>
-              <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">TPO Verification Status</span>
+              <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">TPO Status</span>
               <span id="studentVerifyBadge" class="inline-block mt-1 px-2.5 py-1 text-[10px] font-extrabold rounded transition-all duration-200">PENDING</span>
             </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-3 hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
-          <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">Support Contacts</h3>
-          <div class="text-xs space-y-2 text-slate-600">
-            <p><strong>TPO Office:</strong> tpo@ace.edu</p>
-            <p><strong>IT Support:</strong> support@ace.edu</p>
+        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 shadow-sm">
+          <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">Dashboard Tabs</h2>
+          <div class="flex flex-col gap-2">
+            <button onclick="switchStudentTab('dashboard')" id="btn-student-dashboard" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white">My Applications</button>
+            <button onclick="switchStudentTab('jobs')" id="btn-student-jobs" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Browse Jobs Board</button>
+            <button onclick="switchStudentTab('companies')" id="btn-student-companies" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Explore Companies</button>
           </div>
         </div>
       </div>
 
       <div class="lg:col-span-3 space-y-8">
-        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 hover:shadow-md transition-all duration-200">
-          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Eligible Job Openings</h2>
+        <div id="student-dashboard-section" class="space-y-8">
+          <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 hover:shadow-md transition-all duration-200">
+            <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Your Job Applications</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
+                    <th class="py-3">Company</th>
+                    <th class="py-3">Position</th>
+                    <th class="py-3">Status</th>
+                    <th class="py-3">Interview Slot</th>
+                    <th class="py-3 text-right">Self Schedule</th>
+                  </tr>
+                </thead>
+                <tbody id="studentApplicationsTable" class="divide-y divide-slate-100 text-slate-600">
+                  <tr>
+                    <td colspan="5" class="py-4 text-center text-slate-400">Loading applications...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="student-jobs-section" class="hidden bg-white rounded-lg border border-slate-200 p-6 space-y-4 hover:shadow-md transition-all duration-200">
+          <div class="flex justify-between items-center border-b pb-3 flex-col sm:flex-row gap-3">
+            <h2 class="text-sm font-bold text-slate-900 tracking-wide uppercase">All Recruitment Openings</h2>
+            <div class="flex items-center gap-2">
+              <label for="jobCategoryFilter" class="text-[10px] uppercase font-bold text-slate-400 tracking-wide">Domain:</label>
+              <select id="jobCategoryFilter" onchange="filterJobs()" class="bg-slate-50 text-xs rounded border border-slate-200 px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option value="all">All Domains</option>
+                <option value="CS">Engineering - CS/IT</option>
+                <option value="ME">Engineering - Mechanical</option>
+                <option value="EE">Engineering - Electrical</option>
+                <option value="CE">Engineering - Civil</option>
+                <option value="FN">Finance / Management</option>
+              </select>
+            </div>
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
                 <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
-                  <th class="py-3">Job Title</th>
-                  <th class="py-3">Company</th>
+                  <th class="py-3">Job Designation</th>
+                  <th class="py-3">Recruiting Company</th>
+                  <th class="py-3 text-center">Eligibility Status</th>
                   <th class="py-3 text-center">Package (LPA)</th>
-                  <th class="py-3 text-center">Min CGPA</th>
                   <th class="py-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody id="eligibleJobsTable" class="divide-y divide-slate-100 text-slate-600">
+              <tbody id="allJobsTable" class="divide-y divide-slate-100 text-slate-600">
                 <tr>
-                  <td colspan="5" class="py-4 text-center text-slate-400">Loading jobs...</td>
+                  <td colspan="5" class="py-4 text-center text-slate-400">Loading job postings...</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 hover:shadow-md transition-all duration-200">
-          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Your Job Applications</h2>
+        <div id="student-companies-section" class="hidden bg-white rounded-lg border border-slate-200 p-6 space-y-4 hover:shadow-md transition-all duration-200">
+          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Participating Recruiters Directory</h2>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
                 <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
-                  <th class="py-3">Company</th>
-                  <th class="py-3">Position</th>
-                  <th class="py-3">Status</th>
-                  <th class="py-3">Interview Slot</th>
-                  <th class="py-3 text-right">Self Schedule</th>
+                  <th class="py-3">Company Entity</th>
+                  <th class="py-3 text-center">Active Job Openings</th>
+                  <th class="py-3 text-right">Average Package Offered</th>
                 </tr>
               </thead>
-              <tbody id="studentApplicationsTable" class="divide-y divide-slate-100 text-slate-600">
+              <tbody id="companiesDirectoryTable" class="divide-y divide-slate-100 text-slate-600">
                 <tr>
-                  <td colspan="5" class="py-4 text-center text-slate-400">Loading applications...</td>
+                  <td colspan="3" class="py-4 text-center text-slate-400">Loading companies list...</td>
                 </tr>
               </tbody>
             </table>
@@ -230,8 +266,9 @@
         <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 shadow-sm">
           <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">HR Actions</h2>
           <div class="flex flex-col gap-2">
-            <button onclick="switchHrTab('post')" id="btn-hr-post" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white">Post Job Recruitment</button>
+            <button onclick="switchHrTab('post')" id="btn-hr-post" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white">Publish Job Opening</button>
             <button onclick="switchHrTab('applicants')" id="btn-hr-applicants" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Manage Applicants</button>
+            <button onclick="switchHrTab('active')" id="btn-hr-active" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Active Listings</button>
           </div>
         </div>
       </div>
@@ -298,6 +335,28 @@
             </table>
           </div>
         </div>
+
+        <div id="hr-active-section" class="hidden bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Your Active Recruitment Postings</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
+                  <th class="py-3">Job Designation</th>
+                  <th class="py-3">Minimum CGPA</th>
+                  <th class="py-3">Eligible Branches</th>
+                  <th class="py-3 text-center">Salary Package</th>
+                  <th class="py-3 text-right">Applicant Count</th>
+                </tr>
+              </thead>
+              <tbody id="hrActiveListingsTable" class="divide-y divide-slate-100 text-slate-600">
+                <tr>
+                  <td colspan="5" class="py-4 text-center text-slate-400">Loading openings...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -307,14 +366,15 @@
           <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">Coordinator Menu</h2>
           <div class="flex flex-col gap-2">
             <button onclick="switchCoordinatorTab('stats')" id="btn-coordinator-stats" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white">Department Records</button>
-            <button onclick="switchCoordinatorTab('queries')" id="btn-coordinator-queries" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Student Queries</button>
+            <button onclick="switchCoordinatorTab('directory')" id="btn-coordinator-directory" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Student Directory</button>
+            <button onclick="switchCoordinatorTab('queries')" id="btn-coordinator-queries" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Pending Queries</button>
           </div>
         </div>
       </div>
 
       <div class="lg:col-span-3 space-y-8">
         <div id="coordinator-stats-section" class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
-          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Departmental Placement Records (Live Database)</h2>
+          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Departmental Placement Records</h2>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
@@ -329,6 +389,33 @@
               <tbody id="coordinatorStatsTable" class="divide-y divide-slate-100 text-slate-700">
                 <tr>
                   <td colspan="5" class="py-4 text-center text-slate-400">Loading dynamic analytics stats...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="coordinator-directory-section" class="hidden bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <div class="flex justify-between items-center border-b pb-3 flex-col sm:flex-row gap-3">
+            <h2 class="text-sm font-bold text-slate-900 tracking-wide uppercase">Institute Student Directory</h2>
+            <div class="flex items-center gap-2">
+              <input type="text" id="studentSearchQuery" onkeyup="searchStudents()" class="bg-slate-50 text-xs rounded border border-slate-200 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Search student by name...">
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
+                  <th class="py-3">Student Name</th>
+                  <th class="py-3">Department Branch</th>
+                  <th class="py-3 text-center">Cumulative CGPA</th>
+                  <th class="py-3 text-center">TPO Verified</th>
+                  <th class="py-3 text-right">Placement Status</th>
+                </tr>
+              </thead>
+              <tbody id="coordinatorStudentDirectoryTable" class="divide-y divide-slate-100 text-slate-600">
+                <tr>
+                  <td colspan="5" class="py-4 text-center text-slate-400">Retrieving student records...</td>
                 </tr>
               </tbody>
             </table>
@@ -367,6 +454,8 @@
     let isDemoMode = false;
     let currentToken = '';
     let currentStudentId = null;
+    let allJobsCached = [];
+    let allStudentsCached = [];
 
     const credentials = {
       student: { email: 'alice@college.edu', password: 'alice123' },
@@ -377,19 +466,46 @@
 
     let demoDatabase = {
       students: [
-        { id: 1, name: 'Akshat Sharma', cgpa: 8.5, branch: 'CS', status: 'Unplaced', is_verified: 0 },
+        { id: 1, name: 'Akshat Sharma', cgpa: 8.5, branch: 'CS', status: 'Unplaced', is_verified: 1 },
         { id: 2, name: 'Bob Jones', cgpa: 7.2, branch: 'EC', status: 'Unplaced', is_verified: 0 },
-        { id: 3, name: 'Charlie Brown', cgpa: 9.1, branch: 'CS', status: 'Placed', is_verified: 1 }
+        { id: 3, name: 'Charlie Brown', cgpa: 9.1, branch: 'CS', status: 'Placed', is_verified: 1 },
+        { id: 4, name: 'David Miller', cgpa: 7.8, branch: 'ME', status: 'Unplaced', is_verified: 1 },
+        { id: 5, name: 'Eva Davis', cgpa: 8.6, branch: 'FN', status: 'Unplaced', is_verified: 1 },
+        { id: 6, name: 'Frank Wilson', cgpa: 6.9, branch: 'CE', status: 'Unplaced', is_verified: 0 }
       ],
       jobs: [
         { id: 1, title: 'Software Engineer', company_name: 'Google', min_cgpa: 8.0, branches: 'CS,IT', package_lpa: 25.5, description: 'Build large scale web applications.' },
-        { id: 2, title: 'Hardware Designer', company_name: 'Intel', min_cgpa: 7.0, branches: 'EC,EE', package_lpa: 15.0, description: 'Work on cutting edge chip design.' },
-        { id: 3, title: 'Data Analyst', company_name: 'Amazon', min_cgpa: 7.5, branches: 'CS,IT,EC', package_lpa: 18.0, description: 'Transform raw data into business insights.' }
+        { id: 2, title: 'Hardware Designer', company_name: 'Intel', min_cgpa: 7.0, branches: 'EC,EE', package_lpa: 15.0, description: 'Work on cutting edge chip design and validation.' },
+        { id: 3, title: 'Data Analyst', company_name: 'Amazon', min_cgpa: 7.5, branches: 'CS,IT,EC', package_lpa: 18.0, description: 'Transform raw data into meaningful business insights.' },
+        { id: 4, title: 'Product Manager', company_name: 'Microsoft', min_cgpa: 8.0, branches: 'CS,IT,ME,EE,FN', package_lpa: 22.0, description: 'Coordinate cross-functional development groups.' },
+        { id: 5, title: 'Investment Banker', company_name: 'Goldman Sachs', min_cgpa: 8.5, branches: 'FN', package_lpa: 20.0, description: 'Financial advisory, modeling, and client transactions.' },
+        { id: 6, title: 'Financial Analyst', company_name: 'JPMorgan', min_cgpa: 8.0, branches: 'FN,CS', package_lpa: 18.5, description: 'Perform portfolio analytics and support trading platforms.' },
+        { id: 7, title: 'Robotics Engineer', company_name: 'Tesla', min_cgpa: 8.2, branches: 'ME,EE,EC', package_lpa: 24.0, description: 'Design autonomous assembly systems and battery controls.' },
+        { id: 8, title: 'Aero Structural Engineer', company_name: 'Boeing', min_cgpa: 7.5, branches: 'ME,CE', package_lpa: 16.5, description: 'Conduct stress analysis and safety validation on airframes.' },
+        { id: 9, title: 'Project Manager', company_name: 'L&T', min_cgpa: 6.5, branches: 'CE', package_lpa: 8.5, description: 'Oversee site execution, structural designs, and timelines.' },
+        { id: 10, title: 'Management Consultant', company_name: 'McKinsey', min_cgpa: 8.8, branches: 'FN,CS,ME', package_lpa: 26.0, description: 'Solve business strategy and efficiency issues for clients.' },
+        { id: 11, title: 'GPU Architect', company_name: 'NVIDIA', min_cgpa: 8.5, branches: 'EC,CS', package_lpa: 28.0, description: 'Design next-generation silicon cores for AI acceleration.' },
+        { id: 12, title: 'Power Systems Engineer', company_name: 'General Electric', min_cgpa: 7.0, branches: 'EE', package_lpa: 12.0, description: 'Deploy renewable grid solutions and high voltage systems.' },
+        { id: 13, title: 'Automotive Engineer', company_name: 'Tata Motors', min_cgpa: 7.0, branches: 'ME', package_lpa: 9.5, description: 'Develop structural chassis design and power transmission.' },
+        { id: 14, title: 'UI/UX Designer', company_name: 'Adobe', min_cgpa: 7.5, branches: 'CS,IT,EC', package_lpa: 17.0, description: 'Build scalable interfaces and prototype user flows.' },
+        { id: 15, title: 'Financial Dev Engineer', company_name: 'Bloomberg', min_cgpa: 8.0, branches: 'CS,FN', package_lpa: 21.0, description: 'Work on terminal analytics software and low latency data.' },
+        { id: 16, title: 'Risk Management Analyst', company_name: 'HDFC Bank', min_cgpa: 7.2, branches: 'FN', package_lpa: 11.0, description: 'Assess credit profiles and market volatilities.' },
+        { id: 17, title: 'Control Systems Engineer', company_name: 'Siemens', min_cgpa: 7.0, branches: 'EE,EC', package_lpa: 10.5, description: 'Develop PLC control logic for smart automation.' },
+        { id: 18, title: 'Embedded Systems Engineer', company_name: 'Qualcomm', min_cgpa: 7.8, branches: 'EC,EE', package_lpa: 19.0, description: 'Optimize low-level drivers and mobile chipset architectures.' },
+        { id: 19, title: 'Operations Manager', company_name: 'Reliance', min_cgpa: 7.0, branches: 'ME', package_lpa: 11.5, description: 'Coordinate industrial refinery operations and safety.' },
+        { id: 20, title: 'Business Analyst', company_name: 'Deloitte', min_cgpa: 7.0, branches: 'CS,IT,FN', package_lpa: 10.0, description: 'Support enterprise software transformation programs.' },
+        { id: 21, title: 'Infrastructure Engineer', company_name: 'Microsoft', min_cgpa: 7.8, branches: 'CS,IT,EE', package_lpa: 16.5, description: 'Maintain hybrid cloud structures and pipeline setups.' },
+        { id: 22, title: 'Valuation Specialist', company_name: 'Morgan Stanley', min_cgpa: 8.2, branches: 'FN', package_lpa: 19.5, description: 'Examine transaction pricing and portfolio risks.' },
+        { id: 23, title: 'Civil Site Supervisor', company_name: 'Caterpillar', min_cgpa: 6.8, branches: 'CE,ME', package_lpa: 9.2, description: 'Supervise heavy-machinery operation and concrete structures.' },
+        { id: 24, title: 'Network Architect', company_name: 'Netflix', min_cgpa: 8.5, branches: 'CS,IT', package_lpa: 29.0, description: 'Deploy global content delivery nodes for low latency.' },
+        { id: 25, title: 'Grid Solutions Architect', company_name: 'ABB', min_cgpa: 7.2, branches: 'EE,EC', package_lpa: 11.0, description: 'Implement electrical substations and smart grids.' }
       ],
       applications: [
         { id: 1, job_id: 1, student_id: 1, status: 'Applied', interview_slot: null },
         { id: 2, job_id: 3, student_id: 1, status: 'Scheduled', interview_slot: '2026-06-01 10:00 AM' },
-        { id: 3, job_id: 2, student_id: 2, status: 'Rejected', interview_slot: null }
+        { id: 3, job_id: 2, student_id: 2, status: 'Rejected', interview_slot: null },
+        { id: 4, job_id: 7, student_id: 4, status: 'Applied', interview_slot: null },
+        { id: 5, job_id: 5, student_id: 5, status: 'Applied', interview_slot: null }
       ]
     };
 
@@ -488,7 +604,7 @@
       let activeViewId = '';
       if (selectedRole === 'student') {
         activeViewId = 'studentView';
-        await loadStudentDashboard();
+        switchStudentTab('dashboard');
       } else if (selectedRole === 'tpo') {
         activeViewId = 'tpoView';
         switchTpoTab('overview');
@@ -510,6 +626,19 @@
       }
     }
 
+    function switchStudentTab(tab) {
+      const tabs = ['dashboard', 'jobs', 'companies'];
+      tabs.forEach(t => {
+        document.getElementById(`student-${t}-section`).classList.add('hidden');
+        document.getElementById(`btn-student-${t}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100';
+      });
+
+      document.getElementById(`student-${tab}-section`).classList.remove('hidden');
+      document.getElementById(`btn-student-${tab}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white';
+
+      loadStudentDashboard();
+    }
+
     function switchTpoTab(tab) {
       const tabs = ['overview', 'queue', 'applications'];
       tabs.forEach(t => {
@@ -524,7 +653,7 @@
     }
 
     function switchHrTab(tab) {
-      const tabs = ['post', 'applicants'];
+      const tabs = ['post', 'applicants', 'active'];
       tabs.forEach(t => {
         document.getElementById(`hr-${t}-section`).classList.add('hidden');
         document.getElementById(`btn-hr-${t}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100';
@@ -535,11 +664,13 @@
 
       if (tab === 'applicants') {
         loadHrApplicants();
+      } else if (tab === 'active') {
+        loadHrActivePostings();
       }
     }
 
     function switchCoordinatorTab(tab) {
-      const tabs = ['stats', 'queries'];
+      const tabs = ['stats', 'directory', 'queries'];
       tabs.forEach(t => {
         document.getElementById(`coordinator-${t}-section`).classList.add('hidden');
         document.getElementById(`btn-coordinator-${t}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100';
@@ -550,6 +681,8 @@
 
       if (tab === 'stats') {
         loadCoordinatorStats();
+      } else if (tab === 'directory') {
+        loadCoordinatorDirectory();
       }
     }
 
@@ -571,12 +704,9 @@
               title: job ? job.title : '',
               company_name: job ? job.company_name : ''
             };
-          });
+          }).filter(app => app.student_id === 1 || true);
 
-          eligibleJobs = demoDatabase.jobs.filter(job => {
-            const branchList = job.branches.split(',').map(b => b.trim().toLowerCase());
-            return studentData.cgpa >= job.min_cgpa && branchList.includes(studentData.branch.toLowerCase());
-          });
+          eligibleJobs = demoDatabase.jobs;
         } else {
           const profileRes = await fetch(`${API_BASE}/students/profile`, {
             headers: { 'Authorization': `Bearer ${currentToken}` }
@@ -588,11 +718,13 @@
           });
           applications = await appsRes.json();
 
-          const eligibleRes = await fetch(`${API_BASE}/jobs/eligible`, {
+          const allJobsRes = await fetch(`${API_BASE}/jobs`, {
             headers: { 'Authorization': `Bearer ${currentToken}` }
           });
-          eligibleJobs = await eligibleRes.json();
+          eligibleJobs = await allJobsRes.json();
         }
+
+        allJobsCached = eligibleJobs;
 
         document.getElementById('studentName').innerText = studentData.name;
         document.getElementById('studentBranch').innerText = studentData.branch;
@@ -605,32 +737,6 @@
         } else {
           badge.innerText = 'PENDING APPROVAL';
           badge.className = 'inline-block mt-1 px-2.5 py-1 text-[10px] font-extrabold rounded bg-amber-50 text-amber-700 border border-amber-200';
-        }
-
-        const jobsBody = document.getElementById('eligibleJobsTable');
-        jobsBody.innerHTML = '';
-
-        if (eligibleJobs.length === 0) {
-          jobsBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No matching job listings found.</td></tr>`;
-        } else {
-          eligibleJobs.forEach(job => {
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150';
-            
-            const alreadyApplied = applications && applications.some(app => app.job_id === job.id);
-            const actionButton = alreadyApplied 
-              ? `<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded">APPLIED</span>`
-              : `<button onclick="applyForJob(${job.id})" class="bg-blue-600 hover:bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded tracking-wider uppercase transform hover:scale-105 active:scale-95 transition-all duration-150">Apply</button>`;
-
-            row.innerHTML = `
-              <td class="py-3 font-semibold text-slate-900">${job.title}</td>
-              <td class="py-3 text-slate-600">${job.company_name}</td>
-              <td class="py-3 text-center text-slate-600 font-semibold">${job.package_lpa} LPA</td>
-              <td class="py-3 text-center text-slate-600">${job.min_cgpa}</td>
-              <td class="py-3 text-right">${actionButton}</td>
-            `;
-            jobsBody.appendChild(row);
-          });
         }
 
         const appsBody = document.getElementById('studentApplicationsTable');
@@ -676,8 +782,144 @@
             appsBody.appendChild(row);
           });
         }
+
+        renderJobsList(studentData, applications);
+        await loadCompaniesDirectory();
       } catch (err) {
         showToast('Error loading student profile data.', true);
+      }
+    }
+
+    function renderJobsList(studentData, applications) {
+      const jobsBody = document.getElementById('allJobsTable');
+      jobsBody.innerHTML = '';
+
+      if (allJobsCached.length === 0) {
+        jobsBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No job openings available.</td></tr>`;
+        return;
+      }
+
+      const domainFilter = document.getElementById('jobCategoryFilter').value;
+
+      allJobsCached.forEach(job => {
+        const branchList = job.branches.split(',').map(b => b.trim().toUpperCase());
+        const isBranchEligible = branchList.includes(studentData.branch.toUpperCase());
+        const isCgpaEligible = studentData.cgpa >= job.min_cgpa;
+        const isEligible = isBranchEligible && isCgpaEligible;
+
+        if (domainFilter !== 'all') {
+          const eligibleFilterBranches = job.branches.split(',').map(b => b.trim().toUpperCase());
+          if (!eligibleFilterBranches.includes(domainFilter)) {
+            return;
+          }
+        }
+
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150';
+
+        let eligibilityBadge = '';
+        if (isEligible) {
+          eligibilityBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 rounded">ELIGIBLE</span>`;
+        } else {
+          let reason = '';
+          if (!isBranchEligible && !isCgpaEligible) reason = `Wrong branch & low CGPA`;
+          else if (!isBranchEligible) reason = `Branches: ${job.branches}`;
+          else reason = `Needs ${job.min_cgpa} CGPA`;
+          eligibilityBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100 rounded tooltip" title="${reason}">INELIGIBLE</span>`;
+        }
+
+        const alreadyApplied = applications && applications.some(app => app.job_id === job.id);
+        let actionButton = '';
+        if (alreadyApplied) {
+          actionButton = `<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded">APPLIED</span>`;
+        } else if (isEligible) {
+          actionButton = `<button onclick="applyForJob(${job.id})" class="bg-blue-600 hover:bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded tracking-wider uppercase transform hover:scale-105 active:scale-95 transition-all duration-150">Apply</button>`;
+        } else {
+          actionButton = `<button disabled class="bg-slate-200 text-slate-400 text-[10px] font-bold px-3 py-1.5 rounded uppercase cursor-not-allowed">Locked</button>`;
+        }
+
+        row.innerHTML = `
+          <td class="py-3 font-semibold text-slate-900">${job.title}</td>
+          <td class="py-3 text-slate-600">${job.company_name}</td>
+          <td class="py-3 text-center">${eligibilityBadge}</td>
+          <td class="py-3 text-center text-slate-600 font-semibold">${job.package_lpa} LPA</td>
+          <td class="py-3 text-right">${actionButton}</td>
+        `;
+        jobsBody.appendChild(row);
+      });
+    }
+
+    function filterJobs() {
+      const selectedRole = document.getElementById('roleSelector').value;
+      if (selectedRole === 'student') {
+        const studentName = document.getElementById('studentName').innerText;
+        const studentBranch = document.getElementById('studentBranch').innerText;
+        const studentCgpa = parseFloat(document.getElementById('studentCgpa').innerText);
+        const verifyText = document.getElementById('studentVerifyBadge').innerText;
+        
+        const mockStudent = {
+          name: studentName,
+          branch: studentBranch,
+          cgpa: studentCgpa,
+          is_verified: verifyText === 'VERIFIED' ? 1 : 0
+        };
+
+        let applications = [];
+        if (isDemoMode) {
+          applications = demoDatabase.applications;
+        }
+
+        renderJobsList(mockStudent, applications);
+      }
+    }
+
+    async function loadCompaniesDirectory() {
+      try {
+        let stats = [];
+        if (isDemoMode) {
+          const companiesMap = {};
+          demoDatabase.jobs.forEach(job => {
+            if (!companiesMap[job.company_name]) {
+              companiesMap[job.company_name] = { active_jobs: 0, sum_package: 0 };
+            }
+            companiesMap[job.company_name].active_jobs++;
+            companiesMap[job.company_name].sum_package += job.package_lpa;
+          });
+
+          stats = Object.keys(companiesMap).map(name => {
+            return {
+              company_name: name,
+              active_jobs: companiesMap[name].active_jobs,
+              avg_package: (companiesMap[name].sum_package / companiesMap[name].active_jobs).toFixed(1)
+            };
+          });
+        } else {
+          const res = await fetch(`${API_BASE}/companies`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          stats = await res.json();
+        }
+
+        const tableBody = document.getElementById('companiesDirectoryTable');
+        tableBody.innerHTML = '';
+
+        if (stats.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-slate-400">No recruiters registered.</td></tr>`;
+        } else {
+          stats.forEach(item => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150';
+            const avgPackageText = item.avg_package ? parseFloat(item.avg_package).toFixed(1) + ' LPA' : '-';
+            row.innerHTML = `
+              <td class="py-3 font-semibold text-slate-900">${item.company_name}</td>
+              <td class="py-3 text-center font-semibold text-slate-700">${item.active_jobs} Openings</td>
+              <td class="py-3 text-right font-bold text-slate-900">${avgPackageText}</td>
+            `;
+            tableBody.appendChild(row);
+          });
+        }
+      } catch (err) {
+        showToast('Error loading company list.', true);
       }
     }
 
@@ -950,6 +1192,72 @@
       }
     }
 
+    async function loadHrActivePostings() {
+      try {
+        let activePostings = [];
+        if (isDemoMode) {
+          const hrCompany = 'google';
+          const hrJobs = demoDatabase.jobs.filter(j => j.company_name.toLowerCase() === hrCompany);
+          activePostings = hrJobs.map(job => {
+            const applicantsCount = demoDatabase.applications.filter(a => a.job_id === job.id).length;
+            return {
+              id: job.id,
+              title: job.title,
+              min_cgpa: job.min_cgpa,
+              branches: job.branches,
+              package_lpa: job.package_lpa,
+              applicants_count: applicantsCount
+            };
+          });
+        } else {
+          const jobsRes = await fetch(`${API_BASE}/jobs`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          const allJobs = await jobsRes.json();
+          const hrJobs = allJobs.filter(j => j.company_name.toLowerCase() === 'google');
+
+          const appsRes = await fetch(`${API_BASE}/applications`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          const allApps = await appsRes.json();
+
+          activePostings = hrJobs.map(job => {
+            const count = allApps.filter(a => a.job_id === job.id).length;
+            return {
+              id: job.id,
+              title: job.title,
+              min_cgpa: job.min_cgpa,
+              branches: job.branches,
+              package_lpa: job.package_lpa,
+              applicants_count: count
+            };
+          });
+        }
+
+        const tableBody = document.getElementById('hrActiveListingsTable');
+        tableBody.innerHTML = '';
+
+        if (activePostings.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No active job listings published yet.</td></tr>`;
+        } else {
+          activePostings.forEach(job => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150 text-slate-600';
+            row.innerHTML = `
+              <td class="py-3 font-semibold text-slate-900">${job.title}</td>
+              <td class="py-3 text-center">${job.min_cgpa}</td>
+              <td class="py-3">${job.branches}</td>
+              <td class="py-3 text-center font-semibold text-slate-900">${job.package_lpa} LPA</td>
+              <td class="py-3 text-right font-bold text-blue-600">${job.applicants_count} Applied</td>
+            `;
+            tableBody.appendChild(row);
+          });
+        }
+      } catch (err) {
+        showToast('Error loading active postings list.', true);
+      }
+    }
+
     async function updateApplicationStatus(applicationId, rolePrefix) {
       const select = document.getElementById(`${rolePrefix}-status-${applicationId}`);
       const newStatus = select.value;
@@ -1001,7 +1309,7 @@
       try {
         let stats = [];
         if (isDemoMode) {
-          const branches = ['CS', 'EC', 'EE'];
+          const branches = ['CS', 'EC', 'ME', 'FN', 'CE', 'EE'];
           stats = branches.map(br => {
             const registered = demoDatabase.students.filter(s => s.branch === br).length;
             const placed = demoDatabase.students.filter(s => s.branch === br && s.status === 'Placed').length;
@@ -1068,6 +1376,62 @@
       } catch (err) {
         showToast('Error loading coordinator statistics.', true);
       }
+    }
+
+    async function loadCoordinatorDirectory() {
+      try {
+        let students = [];
+        if (isDemoMode) {
+          students = demoDatabase.students;
+        } else {
+          const res = await fetch(`${API_BASE}/coordinator/students`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          students = await res.json();
+        }
+
+        allStudentsCached = students;
+        renderStudentsDirectory(students);
+      } catch (err) {
+        showToast('Error loading student directory.', true);
+      }
+    }
+
+    function renderStudentsDirectory(students) {
+      const tableBody = document.getElementById('coordinatorStudentDirectoryTable');
+      tableBody.innerHTML = '';
+
+      if (students.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No students registered.</td></tr>`;
+        return;
+      }
+
+      students.forEach(student => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150 text-slate-600';
+        
+        let verifyBadge = student.is_verified === 1 
+          ? `<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded text-[10px] font-bold">VERIFIED</span>`
+          : `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-100 rounded text-[10px] font-bold">PENDING</span>`;
+
+        let statusClass = 'text-slate-500';
+        if (student.status === 'Placed') statusClass = 'text-emerald-600 font-bold';
+
+        row.innerHTML = `
+          <td class="py-3 font-semibold text-slate-900">${student.name}</td>
+          <td class="py-3">${student.branch}</td>
+          <td class="py-3 text-center font-bold text-slate-800">${student.cgpa}</td>
+          <td class="py-3 text-center">${verifyBadge}</td>
+          <td class="py-3 text-right ${statusClass}">${student.status.toUpperCase()}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function searchStudents() {
+      const query = document.getElementById('studentSearchQuery').value.toLowerCase();
+      const filtered = allStudentsCached.filter(s => s.name.toLowerCase().includes(query));
+      renderStudentsDirectory(filtered);
     }
 
     async function verifyStudent(studentId, status) {

@@ -105,13 +105,21 @@ async function seedAndMigrateData() {
       const hashedBob = await bcrypt.hash('bob123', 10);
       const hashedCharlie = await bcrypt.hash('charlie123', 10);
       const hashedHr = await bcrypt.hash('hr123', 10);
+      const hashedCoordinator = await bcrypt.hash('coordinator123', 10);
+      const hashedDavid = await bcrypt.hash('david123', 10);
+      const hashedEva = await bcrypt.hash('eva123', 10);
+      const hashedFrank = await bcrypt.hash('frank123', 10);
 
       const users = [
         ['tpo@college.edu', hashedTpo, 'tpo'],
         ['alice@college.edu', hashedAlice, 'student'],
         ['bob@college.edu', hashedBob, 'student'],
         ['charlie@college.edu', hashedCharlie, 'student'],
-        ['hr@google.com', hashedHr, 'hr']
+        ['hr@google.com', hashedHr, 'hr'],
+        ['coordinator@college.edu', hashedCoordinator, 'coordinator'],
+        ['david@college.edu', hashedDavid, 'student'],
+        ['eva@college.edu', hashedEva, 'student'],
+        ['frank@college.edu', hashedFrank, 'student']
       ];
 
       const insertUserStmt = db.prepare('INSERT INTO users (email, password, role) VALUES (?, ?, ?)');
@@ -121,9 +129,12 @@ async function seedAndMigrateData() {
       insertUserStmt.finalize();
 
       const students = [
-        [2, 'Alice Smith', 8.5, 'CS', 'Unplaced', 1],
+        [2, 'Akshat Sharma', 8.5, 'CS', 'Unplaced', 1],
         [3, 'Bob Jones', 7.2, 'EC', 'Unplaced', 0],
-        [4, 'Charlie Brown', 9.1, 'CS', 'Placed', 1]
+        [4, 'Charlie Brown', 9.1, 'CS', 'Placed', 1],
+        [7, 'David Miller', 7.8, 'ME', 'Unplaced', 1],
+        [8, 'Eva Davis', 8.6, 'FN', 'Unplaced', 1],
+        [9, 'Frank Wilson', 6.9, 'CE', 'Unplaced', 0]
       ];
       const insertStudentStmt = db.prepare('INSERT INTO students (user_id, name, cgpa, branch, status, is_verified) VALUES (?, ?, ?, ?, ?, ?)');
       students.forEach((student) => {
@@ -132,9 +143,31 @@ async function seedAndMigrateData() {
       insertStudentStmt.finalize();
 
       const jobs = [
-        ['Software Engineer', 'Google', 8.0, 'CS,IT', 25.5, 'Build large scale web applications and services.'],
+        ['Software Engineer', 'Google', 8.0, 'CS,IT', 25.5, 'Build large scale web applications.'],
         ['Hardware Designer', 'Intel', 7.0, 'EC,EE', 15.0, 'Work on cutting edge chip design and validation.'],
-        ['Data Analyst', 'Amazon', 7.5, 'CS,IT,EC', 18.0, 'Transform raw data into meaningful business insights.']
+        ['Data Analyst', 'Amazon', 7.5, 'CS,IT,EC', 18.0, 'Transform raw data into meaningful business insights.'],
+        ['Product Manager', 'Microsoft', 8.0, 'CS,IT,ME,EE,FN', 22.0, 'Coordinate cross-functional development groups.'],
+        ['Investment Banker', 'Goldman Sachs', 8.5, 'FN', 20.0, 'Financial advisory, modeling, and client transactions.'],
+        ['Financial Analyst', 'JPMorgan', 8.0, 'FN,CS', 18.5, 'Perform portfolio analytics and support trading platforms.'],
+        ['Robotics Engineer', 'Tesla', 8.2, 'ME,EE,EC', 24.0, 'Design autonomous assembly systems and battery controls.'],
+        ['Aero Structural Engineer', 'Boeing', 7.5, 'ME,CE', 16.5, 'Conduct stress analysis and safety validation on airframes.'],
+        ['Project Manager', 'L&T', 6.5, 'CE', 8.5, 'Oversee site execution, structural designs, and timelines.'],
+        ['Management Consultant', 'McKinsey', 8.8, 'FN,CS,ME', 26.0, 'Solve business strategy and efficiency issues for clients.'],
+        ['GPU Architect', 'NVIDIA', 8.5, 'EC,CS', 28.0, 'Design next-generation silicon cores for AI acceleration.'],
+        ['Power Systems Engineer', 'General Electric', 7.0, 'EE', 12.0, 'Deploy renewable grid solutions and high voltage systems.'],
+        ['Automotive Engineer', 'Tata Motors', 7.0, 'ME', 9.5, 'Develop structural chassis design and power transmission.'],
+        ['UI/UX Designer', 'Adobe', 7.5, 'CS,IT,EC', 17.0, 'Build scalable interfaces and prototype user flows.'],
+        ['Financial Dev Engineer', 'Bloomberg', 8.0, 'CS,FN', 21.0, 'Work on terminal analytics software and low latency data.'],
+        ['Risk Management Analyst', 'HDFC Bank', 7.2, 'FN', 11.0, 'Assess credit profiles and market volatilities.'],
+        ['Control Systems Engineer', 'Siemens', 7.0, 'EE,EC', 10.5, 'Develop PLC control logic for smart automation.'],
+        ['Embedded Systems Engineer', 'Qualcomm', 7.8, 'EC,EE', 19.0, 'Optimize low-level drivers and mobile chipset architectures.'],
+        ['Operations Manager', 'Reliance', 7.0, 'ME', 11.5, 'Coordinate industrial refinery operations and safety.'],
+        ['Business Analyst', 'Deloitte', 7.0, 'CS,IT,FN', 10.0, 'Support enterprise software transformation programs.'],
+        ['Infrastructure Engineer', 'Microsoft', 7.8, 'CS,IT,EE', 16.5, 'Maintain hybrid cloud structures and pipeline setups.'],
+        ['Valuation Specialist', 'Morgan Stanley', 8.2, 'FN', 19.5, 'Examine transaction pricing and portfolio risks.'],
+        ['Civil Site Supervisor', 'Caterpillar', 6.8, 'CE,ME', 9.2, 'Supervise heavy-machinery operation and concrete structures.'],
+        ['Network Architect', 'Netflix', 8.5, 'CS,IT', 29.0, 'Deploy global content delivery nodes for low latency.'],
+        ['Grid Solutions Architect', 'ABB', 7.2, 'EE,EC', 11.0, 'Implement electrical substations and smart grids.']
       ];
       const insertJobStmt = db.prepare('INSERT INTO jobs (title, company_name, min_cgpa, branches, package_lpa, description) VALUES (?, ?, ?, ?, ?, ?)');
       jobs.forEach((job) => {
@@ -145,7 +178,9 @@ async function seedAndMigrateData() {
       const applications = [
         [1, 1, 'Applied', null],
         [3, 1, 'Scheduled', '2026-06-01 10:00 AM'],
-        [2, 2, 'Rejected', null]
+        [2, 2, 'Rejected', null],
+        [7, 4, 'Applied', null],
+        [5, 5, 'Applied', null]
       ];
       const insertAppStmt = db.prepare('INSERT INTO applications (job_id, student_id, status, interview_slot) VALUES (?, ?, ?, ?)');
       applications.forEach((app) => {
@@ -655,6 +690,32 @@ app.get('/api/coordinator/stats', authMiddleware, authorizeRoles('coordinator'),
     res.json(stats);
   } catch (err) {
     console.error('Error fetching coordinator stats:', err.message);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// GET /api/companies (All roles)
+app.get('/api/companies', authMiddleware, async (req, res) => {
+  try {
+    const stats = await dbQuery.all(`
+      SELECT company_name, COUNT(id) as active_jobs, AVG(package_lpa) as avg_package
+      FROM jobs
+      GROUP BY company_name
+    `);
+    res.json(stats);
+  } catch (err) {
+    console.error('Error fetching company stats:', err.message);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// GET /api/coordinator/students (Coordinator and TPO only)
+app.get('/api/coordinator/students', authMiddleware, authorizeRoles('coordinator', 'tpo'), async (req, res) => {
+  try {
+    const students = await dbQuery.all('SELECT * FROM students');
+    res.json(students);
+  } catch (err) {
+    console.error('Error fetching coordinator students list:', err.message);
     res.status(500).json({ error: 'Database error' });
   }
 });
