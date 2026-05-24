@@ -1,4 +1,4 @@
-# 🎓 Campus Placement Portal — Animated GitHub README
+# 🎓 Campus Placement Portal
 
 <div align="center">
 
@@ -347,51 +347,9 @@ Example:
 
 ---
 
-# 📈 GitHub Stats
-
-<div align="center">
-
-![GitHub stars](https://img.shields.io/github/stars/your-username/campus-placement-portal?style=social)
-
-![GitHub forks](https://img.shields.io/github/forks/your-username/campus-placement-portal?style=social)
-
-![GitHub issues](https://img.shields.io/github/issues/your-username/campus-placement-portal)
-
-</div>
-
----
-
-# 🤝 Contributors
-
-<table>
-<tr>
-<td align="center">
-<img src="https://avatars.githubusercontent.com/u/1?v=4" width="100px;" alt=""/>
-<br />
-<b>Your Name</b>
-</td>
-</tr>
-</table>
-
----
 
 # 💡 Vision
 
 > “Transforming traditional campus recruitment into an AI-driven intelligent hiring ecosystem.”
 
 ---
-
-# 📜 License
-
-This project is licensed under the MIT License.
-
----
-
-<div align="center">
-
-# ⭐ Star This Repository If You Like It!
-
-<img src="https://readme-typing-svg.demolab.com?font=Poppins&size=24&pause=1000&color=36BCF7&center=true&vCenter=true&width=700&lines=Thank+You+For+Visiting!;Happy+Coding+🚀;Build+The+Future+With+AI+🤖" />
-
-</div>
-
