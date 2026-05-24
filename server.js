@@ -614,6 +614,26 @@ app.post('/api/tpo/verify', authMiddleware, authorizeRoles('tpo'), async (req, r
   }
 });
 
+// GET /api/students/profile (Student role only)
+app.get('/api/students/profile', authMiddleware, authorizeRoles('student'), async (req, res) => {
+  const studentId = req.user.student_id;
+  if (!studentId) {
+    return res.status(400).json({ error: 'Student profile not found for logged in user' });
+  }
+
+  try {
+    const student = await dbQuery.get('SELECT * FROM students WHERE id = ?', [studentId]);
+    if (!student) {
+      return res.status(404).json({ error: 'Student profile not found' });
+    }
+    res.json(student);
+  } catch (err) {
+    console.error('Error fetching student profile:', err.message);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
