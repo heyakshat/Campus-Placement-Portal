@@ -133,24 +133,52 @@
       </div>
     </div>
 
-    <div id="tpoView" class="hidden view-transition opacity-0 translate-y-2 transform space-y-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg border border-slate-200 text-center space-y-2 hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
-          <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Total Active Jobs</span>
-          <p id="tpoTotalJobs" class="text-4xl font-extrabold text-slate-900">0</p>
+    <div id="tpoView" class="hidden view-transition opacity-0 translate-y-2 transform grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 shadow-sm">
+          <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">TPO Controls</h2>
+          <div class="flex flex-col gap-2">
+            <button onclick="switchTpoTab('overview')" id="btn-tpo-overview" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white">Overview & Stats</button>
+            <button onclick="switchTpoTab('queue')" id="btn-tpo-queue" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Verification Queue</button>
+            <button onclick="switchTpoTab('applications')" id="btn-tpo-applications" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">All Applications</button>
+          </div>
         </div>
-        <div class="bg-white p-6 rounded-lg border border-slate-200 text-center space-y-2 hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
-          <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Students Placed</span>
-          <p id="tpoTotalPlaced" class="text-4xl font-extrabold text-slate-900">0</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg border border-slate-200 text-center space-y-2 hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
-          <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Pending Verifications</span>
-          <p id="tpoPendingVerify" class="text-4xl font-extrabold text-amber-600">0</p>
+
+        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 shadow-sm">
+          <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">Announcement</h2>
+          <form onsubmit="broadcastAnnouncement(event)" class="space-y-3">
+            <div>
+              <label for="announcementTitle" class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Subject</label>
+              <input type="text" id="announcementTitle" required class="w-full px-2.5 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="e.g. Test schedules">
+            </div>
+            <div>
+              <label for="announcementBody" class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Message</label>
+              <textarea id="announcementBody" rows="4" required class="w-full px-2.5 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="Details..."></textarea>
+            </div>
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded text-xs font-bold uppercase transition-all duration-150 hover:scale-[1.01]">Broadcast</button>
+          </form>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-lg border border-slate-200 lg:col-span-2 space-y-4 hover:shadow-md transition-all duration-200">
+      <div class="lg:col-span-3 space-y-8">
+        <div id="tpo-overview-section" class="space-y-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg border border-slate-200 text-center space-y-2 hover:shadow-md transition-all duration-200">
+              <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Total Active Jobs</span>
+              <p id="tpoTotalJobs" class="text-4xl font-extrabold text-slate-900">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg border border-slate-200 text-center space-y-2 hover:shadow-md transition-all duration-200">
+              <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Students Placed</span>
+              <p id="tpoTotalPlaced" class="text-4xl font-extrabold text-slate-900">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg border border-slate-200 text-center space-y-2 hover:shadow-md transition-all duration-200">
+              <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Pending Verifications</span>
+              <p id="tpoPendingVerify" class="text-4xl font-extrabold text-amber-600">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tpo-queue-section" class="hidden bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
           <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Verification Queue</h2>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
@@ -171,126 +199,158 @@
           </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg border border-slate-200 space-y-4 hover:shadow-md transition-all duration-200">
-          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Broadcast Announcement</h2>
-          <form onsubmit="broadcastAnnouncement(event)" class="space-y-4">
-            <div>
-              <label for="announcementTitle" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Subject Title</label>
-              <input type="text" id="announcementTitle" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="e.g. Schedule for CSE Placements">
-            </div>
-            <div>
-              <label for="announcementBody" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Announcement Body</label>
-              <textarea id="announcementBody" rows="5" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="Write message details for the students..."></textarea>
-            </div>
-            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded text-xs font-bold tracking-wider transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] uppercase">Broadcast Message</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div id="hrView" class="hidden view-transition opacity-0 translate-y-2 transform max-w-2xl mx-auto bg-white p-8 rounded-lg border border-slate-200 hover:shadow-md transition-all duration-200 space-y-6">
-      <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Post a New Job Recruitment</h2>
-      <form onsubmit="submitJobPosting(event)" class="space-y-5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label for="jobTitle" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Job Designation</label>
-            <input type="text" id="jobTitle" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="e.g. Software Engineer">
-          </div>
-          <div>
-            <label for="companyName" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Company Entity</label>
-            <input type="text" id="companyName" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="e.g. Google LLC">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label for="minCgpa" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Min CGPA Required</label>
-            <input type="number" id="minCgpa" step="0.1" min="0" max="10" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="e.g. 7.5">
-          </div>
-          <div>
-            <label for="packageLpa" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Package (CTC in LPA)</label>
-            <input type="number" id="packageLpa" step="0.1" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="e.g. 18.0">
-          </div>
-          <div>
-            <label for="branches" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Eligible Branches</label>
-            <input type="text" id="branches" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="e.g. CS,IT,EC">
-          </div>
-        </div>
-
-        <div>
-          <label for="jobDescription" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Recruitment Description</label>
-          <textarea id="jobDescription" rows="5" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 transition-colors duration-150" placeholder="Enter roles, skills, and qualifications..."></textarea>
-        </div>
-
-        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-805 text-white py-3 rounded text-xs font-bold tracking-wider transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] uppercase">Publish Job Posting</button>
-      </form>
-    </div>
-
-    <div id="coordinatorView" class="hidden view-transition opacity-0 translate-y-2 transform space-y-8">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-lg border border-slate-200 lg:col-span-2 space-y-4 hover:shadow-md transition-all duration-200">
-          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Departmental Statistics</h2>
+        <div id="tpo-applications-section" class="hidden bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">All Student Applications</h2>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
                 <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
-                  <th class="py-3">Branch / Department</th>
-                  <th class="py-3 text-center">Registered</th>
-                  <th class="py-3 text-center">Placed</th>
-                  <th class="py-3 text-center">Success Rate</th>
-                  <th class="py-3 text-right">Average Package</th>
+                  <th class="py-3">Student</th>
+                  <th class="py-3">Branch</th>
+                  <th class="py-3">Company</th>
+                  <th class="py-3">Designation</th>
+                  <th class="py-3 text-center">Status</th>
+                  <th class="py-3">Interview Slot</th>
+                  <th class="py-3 text-right">TPO Actions</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-100 text-slate-700">
-                <tr class="hover:bg-slate-50 transition-colors duration-150">
-                  <td class="py-3 font-semibold text-slate-900">Computer Science & Engineering (CSE)</td>
-                  <td class="py-3 text-center">120</td>
-                  <td class="py-3 text-center">112</td>
-                  <td class="py-3 text-center"><span class="px-2 py-0.5 font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded">93.3%</span></td>
-                  <td class="py-3 text-right font-semibold">18.4 LPA</td>
+              <tbody id="tpoApplicationsTable" class="divide-y divide-slate-100 text-slate-600">
+                <tr>
+                  <td colspan="7" class="py-4 text-center text-slate-400">Loading student applications...</td>
                 </tr>
-                <tr class="hover:bg-slate-50 transition-colors duration-150">
-                  <td class="py-3 font-semibold text-slate-900">Information Technology (IT)</td>
-                  <td class="py-3 text-center">90</td>
-                  <td class="py-3 text-center">81</td>
-                  <td class="py-3 text-center"><span class="px-2 py-0.5 font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded">90.0%</span></td>
-                  <td class="py-3 text-right font-semibold">16.2 LPA</td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hrView" class="hidden view-transition opacity-0 translate-y-2 transform grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 shadow-sm">
+          <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">HR Actions</h2>
+          <div class="flex flex-col gap-2">
+            <button onclick="switchHrTab('post')" id="btn-hr-post" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white">Post Job Recruitment</button>
+            <button onclick="switchHrTab('applicants')" id="btn-hr-applicants" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Manage Applicants</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-3 space-y-8">
+        <div id="hr-post-section" class="bg-white p-8 rounded-lg border border-slate-200 shadow-sm space-y-6">
+          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Publish recruitment opening</h2>
+          <form onsubmit="submitJobPosting(event)" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="jobTitle" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Job Designation</label>
+                <input type="text" id="jobTitle" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="e.g. Software Engineer">
+              </div>
+              <div>
+                <label for="companyName" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Company Entity</label>
+                <input type="text" id="companyName" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="Google">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label for="minCgpa" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Min CGPA Required</label>
+                <input type="number" id="minCgpa" step="0.1" min="0" max="10" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="e.g. 7.5">
+              </div>
+              <div>
+                <label for="packageLpa" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Package (LPA)</label>
+                <input type="number" id="packageLpa" step="0.1" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="e.g. 18.0">
+              </div>
+              <div>
+                <label for="branches" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Eligible Branches</label>
+                <input type="text" id="branches" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="e.g. CS,IT,EC">
+              </div>
+            </div>
+
+            <div>
+              <label for="jobDescription" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Recruitment Description</label>
+              <textarea id="jobDescription" rows="5" required class="w-full px-3 py-2 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500" placeholder="Describe roles, technical skill requirements..."></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded text-xs font-bold tracking-wider transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] uppercase">Publish Job Posting</button>
+          </form>
+        </div>
+
+        <div id="hr-applicants-section" class="hidden bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Job Applicants & Selection</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
+                  <th class="py-3">Applicant Name</th>
+                  <th class="py-3">Branch</th>
+                  <th class="py-3 text-center">CGPA</th>
+                  <th class="py-3">Designation</th>
+                  <th class="py-3 text-center">Status</th>
+                  <th class="py-3">Interview Slot</th>
+                  <th class="py-3 text-right">Recruitment Decision</th>
                 </tr>
-                <tr class="hover:bg-slate-50 transition-colors duration-150">
-                  <td class="py-3 font-semibold text-slate-900">Electronics & Communication (ECE)</td>
-                  <td class="py-3 text-center">110</td>
-                  <td class="py-3 text-center">88</td>
-                  <td class="py-3 text-center"><span class="px-2 py-0.5 font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded">80.0%</span></td>
-                  <td class="py-3 text-right font-semibold">12.5 LPA</td>
+              </thead>
+              <tbody id="hrApplicantsTable" class="divide-y divide-slate-100 text-slate-600">
+                <tr>
+                  <td colspan="7" class="py-4 text-center text-slate-400">Loading applicants list...</td>
                 </tr>
-                <tr class="hover:bg-slate-50 transition-colors duration-150">
-                  <td class="py-3 font-semibold text-slate-900">Electrical Engineering (EE)</td>
-                  <td class="py-3 text-center">80</td>
-                  <td class="py-3 text-center">56</td>
-                  <td class="py-3 text-center"><span class="px-2 py-0.5 font-bold bg-slate-50 text-slate-600 border border-slate-200 rounded">70.0%</span></td>
-                  <td class="py-3 text-right font-semibold">9.8 LPA</td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="coordinatorView" class="hidden view-transition opacity-0 translate-y-2 transform grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white rounded-lg border border-slate-200 p-6 space-y-4 shadow-sm">
+          <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b pb-2">Coordinator Menu</h2>
+          <div class="flex flex-col gap-2">
+            <button onclick="switchCoordinatorTab('stats')" id="btn-coordinator-stats" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white">Department Records</button>
+            <button onclick="switchCoordinatorTab('queries')" id="btn-coordinator-queries" class="w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100">Student Queries</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-3 space-y-8">
+        <div id="coordinator-stats-section" class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Departmental Placement Records (Live Database)</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold">
+                  <th class="py-3">Academic Department</th>
+                  <th class="py-3 text-center">Registered</th>
+                  <th class="py-3 text-center">Placed</th>
+                  <th class="py-3 text-center">Placement Success Rate</th>
+                  <th class="py-3 text-right">Average Salary Package</th>
+                </tr>
+              </thead>
+              <tbody id="coordinatorStatsTable" class="divide-y divide-slate-100 text-slate-700">
+                <tr>
+                  <td colspan="5" class="py-4 text-center text-slate-400">Loading dynamic analytics stats...</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div class="bg-white p-6 rounded-lg border border-slate-200 space-y-4 hover:shadow-md transition-all duration-200">
+        <div id="coordinator-queries-section" class="hidden bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
           <h2 class="text-sm font-bold text-slate-900 border-b pb-3 tracking-wide uppercase">Active Coordinator Queries</h2>
-          <div class="space-y-4">
-            <div class="border border-slate-100 bg-slate-50 rounded-lg p-4 text-xs space-y-2 hover:bg-white transition-colors duration-200 border border-transparent hover:border-slate-200">
+          <div class="space-y-4" id="coordinatorQueriesList">
+            <div class="border border-slate-100 bg-slate-50 rounded-lg p-4 text-xs space-y-2 hover:bg-white border-transparent hover:border-slate-200 transition-all duration-200">
               <div class="flex justify-between items-start">
                 <span class="font-bold text-slate-800">Akshat Sharma (CS)</span>
-                <span class="bg-amber-100 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase tracking-wide">Pending verification</span>
+                <span class="bg-amber-100 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase tracking-wide">Pending TPO Action</span>
               </div>
-              <p class="text-slate-600 leading-relaxed">Profile verification has been requested from the TPO dashboard. Updated grades are attached.</p>
+              <p class="text-slate-600 leading-relaxed">Verification request remains pending. I have uploaded my updated Semester 6 transcripts detailing my 8.5 CGPA.</p>
             </div>
-            <div class="border border-slate-100 bg-slate-50 rounded-lg p-4 text-xs space-y-2 hover:bg-white transition-colors duration-200 border border-transparent hover:border-slate-200">
+            <div class="border border-slate-100 bg-slate-50 rounded-lg p-4 text-xs space-y-2 hover:bg-white border-transparent hover:border-slate-200 transition-all duration-200">
               <div class="flex justify-between items-start">
                 <span class="font-bold text-slate-800">Bob Jones (EC)</span>
                 <span class="bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded font-extrabold text-[9px] uppercase tracking-wide">NOC Issued</span>
               </div>
-              <p class="text-slate-600 leading-relaxed">NOC for the summer internship opportunity with Intel has been approved by the department.</p>
+              <p class="text-slate-600 leading-relaxed">Require placement cell NOC document for the upcoming summer internship selection at Intel.</p>
             </div>
           </div>
         </div>
@@ -311,12 +371,15 @@
     const credentials = {
       student: { email: 'alice@college.edu', password: 'alice123' },
       tpo: { email: 'tpo@college.edu', password: 'tpo123' },
-      hr: { email: 'hr@google.com', password: 'hr123' }
+      hr: { email: 'hr@google.com', password: 'hr123' },
+      coordinator: { email: 'coordinator@college.edu', password: 'coordinator123' }
     };
 
     let demoDatabase = {
       students: [
-        { id: 1, name: 'Akshat Sharma', cgpa: 8.5, branch: 'CS', status: 'Unplaced', is_verified: 0 }
+        { id: 1, name: 'Akshat Sharma', cgpa: 8.5, branch: 'CS', status: 'Unplaced', is_verified: 0 },
+        { id: 2, name: 'Bob Jones', cgpa: 7.2, branch: 'EC', status: 'Unplaced', is_verified: 0 },
+        { id: 3, name: 'Charlie Brown', cgpa: 9.1, branch: 'CS', status: 'Placed', is_verified: 1 }
       ],
       jobs: [
         { id: 1, title: 'Software Engineer', company_name: 'Google', min_cgpa: 8.0, branches: 'CS,IT', package_lpa: 25.5, description: 'Build large scale web applications.' },
@@ -324,7 +387,9 @@
         { id: 3, title: 'Data Analyst', company_name: 'Amazon', min_cgpa: 7.5, branches: 'CS,IT,EC', package_lpa: 18.0, description: 'Transform raw data into business insights.' }
       ],
       applications: [
-        { id: 1, job_id: 1, student_id: 1, status: 'Applied', interview_slot: null }
+        { id: 1, job_id: 1, student_id: 1, status: 'Applied', interview_slot: null },
+        { id: 2, job_id: 3, student_id: 1, status: 'Scheduled', interview_slot: '2026-06-01 10:00 AM' },
+        { id: 3, job_id: 2, student_id: 2, status: 'Rejected', interview_slot: null }
       ]
     };
 
@@ -369,9 +434,10 @@
 
     async function authenticate(role) {
       if (role === 'coordinator') {
-        currentToken = '';
-        currentStudentId = null;
-        return true;
+        if (isDemoMode) {
+          currentToken = 'demo-token';
+          return true;
+        }
       }
       if (isDemoMode) {
         currentToken = 'demo-token';
@@ -425,11 +491,13 @@
         await loadStudentDashboard();
       } else if (selectedRole === 'tpo') {
         activeViewId = 'tpoView';
-        await loadTpoDashboard();
+        switchTpoTab('overview');
       } else if (selectedRole === 'hr') {
         activeViewId = 'hrView';
+        switchHrTab('post');
       } else if (selectedRole === 'coordinator') {
         activeViewId = 'coordinatorView';
+        switchCoordinatorTab('stats');
       }
 
       if (activeViewId) {
@@ -439,6 +507,49 @@
           activeEl.classList.remove('opacity-0', 'translate-y-2');
           activeEl.classList.add('opacity-100', 'translate-y-0');
         }, 50);
+      }
+    }
+
+    function switchTpoTab(tab) {
+      const tabs = ['overview', 'queue', 'applications'];
+      tabs.forEach(t => {
+        document.getElementById(`tpo-${t}-section`).classList.add('hidden');
+        document.getElementById(`btn-tpo-${t}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100';
+      });
+
+      document.getElementById(`tpo-${tab}-section`).classList.remove('hidden');
+      document.getElementById(`btn-tpo-${tab}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white';
+
+      loadTpoDashboard();
+    }
+
+    function switchHrTab(tab) {
+      const tabs = ['post', 'applicants'];
+      tabs.forEach(t => {
+        document.getElementById(`hr-${t}-section`).classList.add('hidden');
+        document.getElementById(`btn-hr-${t}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100';
+      });
+
+      document.getElementById(`hr-${tab}-section`).classList.remove('hidden');
+      document.getElementById(`btn-hr-${tab}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white';
+
+      if (tab === 'applicants') {
+        loadHrApplicants();
+      }
+    }
+
+    function switchCoordinatorTab(tab) {
+      const tabs = ['stats', 'queries'];
+      tabs.forEach(t => {
+        document.getElementById(`coordinator-${t}-section`).classList.add('hidden');
+        document.getElementById(`btn-coordinator-${t}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 text-slate-700 hover:bg-slate-100';
+      });
+
+      document.getElementById(`coordinator-${tab}-section`).classList.remove('hidden');
+      document.getElementById(`btn-coordinator-${tab}`).className = 'w-full text-left px-3 py-2 text-xs font-bold rounded transition-colors duration-150 bg-slate-900 text-white';
+
+      if (tab === 'stats') {
+        loadCoordinatorStats();
       }
     }
 
@@ -654,6 +765,7 @@
       try {
         let stats = {};
         let unverified = [];
+        let allApps = [];
 
         if (isDemoMode) {
           stats = {
@@ -662,6 +774,19 @@
             verificationQueueCount: demoDatabase.students.filter(s => s.is_verified === 0).length
           };
           unverified = demoDatabase.students.filter(s => s.is_verified === 0);
+          allApps = demoDatabase.applications.map(app => {
+            const student = demoDatabase.students.find(s => s.id === app.student_id);
+            const job = demoDatabase.jobs.find(j => j.id === app.job_id);
+            return {
+              application_id: app.id,
+              student_name: student ? student.name : '',
+              branch: student ? student.branch : '',
+              company_name: job ? job.company_name : '',
+              title: job ? job.title : '',
+              status: app.status,
+              interview_slot: app.interview_slot
+            };
+          });
         } else {
           const statsRes = await fetch(`${API_BASE}/tpo/stats`, {
             headers: { 'Authorization': `Bearer ${currentToken}` }
@@ -672,6 +797,11 @@
             headers: { 'Authorization': `Bearer ${currentToken}` }
           });
           unverified = await queueRes.json();
+
+          const appsRes = await fetch(`${API_BASE}/applications`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          allApps = await appsRes.json();
         }
 
         document.getElementById('tpoTotalJobs').innerText = stats.totalJobs || 0;
@@ -699,8 +829,244 @@
             tableBody.appendChild(row);
           });
         }
+
+        const appsBody = document.getElementById('tpoApplicationsTable');
+        appsBody.innerHTML = '';
+
+        if (allApps.length === 0) {
+          appsBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">No student applications submitted.</td></tr>`;
+        } else {
+          allApps.forEach(app => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150';
+            
+            let statusClass = 'bg-slate-100 text-slate-600';
+            if (app.status === 'Placed') statusClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+            if (app.status === 'Scheduled') statusClass = 'bg-blue-50 text-blue-700 border border-blue-200';
+            if (app.status === 'Rejected') statusClass = 'bg-rose-50 text-rose-700 border border-rose-200';
+
+            const displaySlot = app.interview_slot ? app.interview_slot : 'Not Scheduled';
+
+            const adminControls = `
+              <div class="flex items-center justify-end gap-1">
+                <select id="tpo-status-${app.application_id}" class="bg-white text-[10px] border border-slate-200 rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                  <option value="Applied" ${app.status === 'Applied' ? 'selected' : ''}>Applied</option>
+                  <option value="Scheduled" ${app.status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
+                  <option value="Placed" ${app.status === 'Placed' ? 'selected' : ''}>Placed</option>
+                  <option value="Rejected" ${app.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                </select>
+                <button onclick="updateApplicationStatus(${app.application_id}, 'tpo')" class="bg-slate-900 hover:bg-slate-800 text-white text-[8px] font-bold px-2 py-1 rounded transition-colors duration-150 uppercase">Update</button>
+              </div>
+            `;
+
+            row.innerHTML = `
+              <td class="py-3 font-semibold text-slate-900">${app.student_name}</td>
+              <td class="py-3 text-slate-600">${app.branch}</td>
+              <td class="py-3 text-slate-600">${app.company_name}</td>
+              <td class="py-3 text-slate-600">${app.title}</td>
+              <td class="py-3 text-center"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${statusClass}">${app.status.toUpperCase()}</span></td>
+              <td class="py-3 text-slate-600 font-semibold">${displaySlot}</td>
+              <td class="py-3 text-right">${adminControls}</td>
+            `;
+            appsBody.appendChild(row);
+          });
+        }
       } catch (err) {
         showToast('Error loading TPO statistics.', true);
+      }
+    }
+
+    async function loadHrApplicants() {
+      try {
+        let applicants = [];
+        if (isDemoMode) {
+          applicants = demoDatabase.applications.filter(app => {
+            const job = demoDatabase.jobs.find(j => j.id === app.job_id);
+            return job && job.company_name.toLowerCase() === 'google';
+          }).map(app => {
+            const student = demoDatabase.students.find(s => s.id === app.student_id);
+            const job = demoDatabase.jobs.find(j => j.id === app.job_id);
+            return {
+              application_id: app.id,
+              student_name: student ? student.name : '',
+              branch: student ? student.branch : '',
+              cgpa: student ? student.cgpa : 0,
+              title: job ? job.title : '',
+              status: app.status,
+              interview_slot: app.interview_slot
+            };
+          });
+        } else {
+          const appsRes = await fetch(`${API_BASE}/applications`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          const allApps = await appsRes.json();
+          applicants = allApps.filter(app => app.company_name.toLowerCase() === 'google');
+        }
+
+        const tableBody = document.getElementById('hrApplicantsTable');
+        tableBody.innerHTML = '';
+
+        if (applicants.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">No applicants for your openings currently.</td></tr>`;
+        } else {
+          applicants.forEach(app => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150';
+            
+            let statusClass = 'bg-slate-100 text-slate-600';
+            if (app.status === 'Placed') statusClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+            if (app.status === 'Scheduled') statusClass = 'bg-blue-50 text-blue-700 border border-blue-200';
+            if (app.status === 'Rejected') statusClass = 'bg-rose-50 text-rose-700 border border-rose-200';
+
+            const displaySlot = app.interview_slot ? app.interview_slot : 'Not Scheduled';
+
+            const hrControls = `
+              <div class="flex items-center justify-end gap-1">
+                <select id="hr-status-${app.application_id}" class="bg-white text-[10px] border border-slate-200 rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                  <option value="Applied" ${app.status === 'Applied' ? 'selected' : ''}>Applied</option>
+                  <option value="Scheduled" ${app.status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
+                  <option value="Placed" ${app.status === 'Placed' ? 'selected' : ''}>Placed</option>
+                  <option value="Rejected" ${app.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                </select>
+                <button onclick="updateApplicationStatus(${app.application_id}, 'hr')" class="bg-slate-900 hover:bg-slate-800 text-white text-[8px] font-bold px-2 py-1 rounded transition-colors duration-150 uppercase">Update</button>
+              </div>
+            `;
+
+            row.innerHTML = `
+              <td class="py-3 font-semibold text-slate-900">${app.student_name}</td>
+              <td class="py-3 text-slate-600">${app.branch}</td>
+              <td class="py-3 text-center text-slate-600 font-semibold">${app.cgpa}</td>
+              <td class="py-3 text-slate-600">${app.title}</td>
+              <td class="py-3 text-center"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${statusClass}">${app.status.toUpperCase()}</span></td>
+              <td class="py-3 text-slate-600 font-semibold">${displaySlot}</td>
+              <td class="py-3 text-right">${hrControls}</td>
+            `;
+            tableBody.appendChild(row);
+          });
+        }
+      } catch (err) {
+        showToast('Error loading HR applications.', true);
+      }
+    }
+
+    async function updateApplicationStatus(applicationId, rolePrefix) {
+      const select = document.getElementById(`${rolePrefix}-status-${applicationId}`);
+      const newStatus = select.value;
+
+      if (isDemoMode) {
+        const app = demoDatabase.applications.find(a => a.id === applicationId);
+        if (app) {
+          app.status = newStatus;
+          if (newStatus === 'Placed') {
+            const student = demoDatabase.students.find(s => s.id === app.student_id);
+            if (student) student.status = 'Placed';
+          }
+          showToast('Application status updated successfully.');
+          if (rolePrefix === 'hr') {
+            await loadHrApplicants();
+          } else {
+            await loadTpoDashboard();
+          }
+        }
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/applications/${applicationId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showToast('Application status updated successfully.');
+          if (rolePrefix === 'hr') {
+            await loadHrApplicants();
+          } else {
+            await loadTpoDashboard();
+          }
+        } else {
+          showToast(data.error || 'Failed to update status', true);
+        }
+      } catch (err) {
+        showToast('Communication error updating status.', true);
+      }
+    }
+
+    async function loadCoordinatorStats() {
+      try {
+        let stats = [];
+        if (isDemoMode) {
+          const branches = ['CS', 'EC', 'EE'];
+          stats = branches.map(br => {
+            const registered = demoDatabase.students.filter(s => s.branch === br).length;
+            const placed = demoDatabase.students.filter(s => s.branch === br && s.status === 'Placed').length;
+            const successRate = registered > 0 ? ((placed / registered) * 100).toFixed(1) + '%' : '0.0%';
+            
+            let avgSalary = 0;
+            const placedApps = demoDatabase.applications.filter(app => {
+              const student = demoDatabase.students.find(s => s.id === app.student_id);
+              return student && student.branch === br && app.status === 'Placed';
+            });
+            if (placedApps.length > 0) {
+              const sum = placedApps.reduce((acc, app) => {
+                const job = demoDatabase.jobs.find(j => j.id === app.job_id);
+                return acc + (job ? job.package_lpa : 0);
+              }, 0);
+              avgSalary = (sum / placedApps.length).toFixed(1);
+            } else {
+              avgSalary = '- ';
+            }
+
+            return {
+              branch: br,
+              registered,
+              placed,
+              successRate,
+              avg_package: avgSalary + ' LPA'
+            };
+          });
+        } else {
+          const res = await fetch(`${API_BASE}/coordinator/stats`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          const backendStats = await res.json();
+          stats = backendStats.map(item => {
+            const reg = item.registered || 0;
+            const plc = item.placed || 0;
+            const rate = reg > 0 ? ((plc / reg) * 100).toFixed(1) + '%' : '0.0%';
+            const avg = item.avg_package ? parseFloat(item.avg_package).toFixed(1) + ' LPA' : '-';
+            return {
+              branch: item.branch,
+              registered: reg,
+              placed: plc,
+              successRate: rate,
+              avg_package: avg
+            };
+          });
+        }
+
+        const tableBody = document.getElementById('coordinatorStatsTable');
+        tableBody.innerHTML = '';
+
+        stats.forEach(item => {
+          const row = document.createElement('tr');
+          row.className = 'hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150 text-slate-700';
+          row.innerHTML = `
+            <td class="py-3 font-semibold text-slate-900">${item.branch}</td>
+            <td class="py-3 text-center">${item.registered}</td>
+            <td class="py-3 text-center">${item.placed}</td>
+            <td class="py-3 text-center"><span class="px-2 py-0.5 font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded">${item.successRate}</span></td>
+            <td class="py-3 text-right font-semibold">${item.avg_package}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      } catch (err) {
+        showToast('Error loading coordinator statistics.', true);
       }
     }
 

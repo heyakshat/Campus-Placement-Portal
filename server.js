@@ -168,6 +168,11 @@ async function seedAndMigrateData() {
       if (migratedCount > 0) {
         console.log(`Successfully migrated ${migratedCount} plain text passwords to bcrypt hashes.`);
       }
+      const coord = await dbQuery.get("SELECT id FROM users WHERE email = 'coordinator@college.edu'");
+      if (!coord) {
+        const hashedCoordinator = await bcrypt.hash('coordinator123', 10);
+        await dbQuery.run("INSERT INTO users (email, password, role) VALUES ('coordinator@college.edu', ?, 'coordinator')", [hashedCoordinator]);
+      }
     }
   } catch (err) {
     console.error('Error seeding/migrating data:', err.message);
@@ -210,10 +215,10 @@ app.post('/api/auth/register', async (req, res) => {
     return res.status(400).json({ error: 'Please provide email, password, and role (student, tpo, hr)' });
   }
 
-  const validRoles = ['student', 'tpo', 'hr'];
+  const validRoles = ['student', 'tpo', 'hr', 'coordinator'];
   const userRole = role.toLowerCase().trim();
   if (!validRoles.includes(userRole)) {
-    return res.status(400).json({ error: 'Invalid role. Must be one of: student, tpo, hr' });
+    return res.status(400).json({ error: 'Invalid role. Must be one of: student, tpo, hr, coordinator' });
   }
 
   try {
@@ -629,6 +634,27 @@ app.get('/api/students/profile', authMiddleware, authorizeRoles('student'), asyn
     res.json(student);
   } catch (err) {
     console.error('Error fetching student profile:', err.message);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// GET /api/coordinator/stats (Coordinator role only)
+app.get('/api/coordinator/stats', authMiddleware, authorizeRoles('coordinator'), async (req, res) => {
+  try {
+    const query = `
+      SELECT s.branch, 
+             COUNT(s.id) as registered,
+             SUM(CASE WHEN s.status = 'Placed' THEN 1 ELSE 0 END) as placed,
+             AVG(CASE WHEN s.status = 'Placed' THEN j.package_lpa ELSE NULL END) as avg_package
+      FROM students s
+      LEFT JOIN applications a ON s.id = a.student_id AND a.status = 'Placed'
+      LEFT JOIN jobs j ON a.job_id = j.id
+      GROUP BY s.branch
+    `;
+    const stats = await dbQuery.all(query);
+    res.json(stats);
+  } catch (err) {
+    console.error('Error fetching coordinator stats:', err.message);
     res.status(500).json({ error: 'Database error' });
   }
 });
