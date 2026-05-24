@@ -495,7 +495,7 @@ app.post('/api/applications/apply', authMiddleware, authorizeRoles('student'), a
   }
 });
 
-app.post('/api/applications/schedule', authMiddleware, authorizeRoles('hr', 'tpo'), async (req, res) => {
+app.post('/api/applications/schedule', authMiddleware, authorizeRoles('hr', 'tpo', 'student'), async (req, res) => {
   const { application_id, interview_slot } = req.body;
   if (!application_id || !interview_slot) {
     return res.status(400).json({ error: 'Please provide application_id and interview_slot' });
